@@ -8,6 +8,8 @@ bgColour = "#1b1f33"
 bgColourLight = "#3d456e"
 colour2 = "#7ccbe6"
 colour2light = "#bdeeff"
+clePublique = ""
+clePrivee = ""
 
 def generate_private_key():
     private_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
@@ -43,19 +45,32 @@ def parcourir():
     
     print("parcourir")
     
-
+#envoie fichier compilé
 def envoyer():
     #à faire
-    print("envoyer")
+    print("envoyer fichier")
 
 def listboxSelect(event):
     buttonEnvoyer.config(state = "normal")
     buttonEnvoyer.config(bg = colour2)
 
 def generer():
-    cle = "CLÉ" #génère la clé
-    textClePrivee.insert("1", cle)
-    buttonEnvoyer2.config(state = "normal")
+    textClePrivee.config(state = "normal")
+    global clePublique
+    global clePrivee
+
+    clePrivee = generate_private_key()
+    clePublique = encode_public_key(get_public_key(clePrivee))
+    textClePrivee.insert("1.0", clePublique)
+
+    buttonEnvoyer2.config(state = 'normal')
+    textClePrivee.config(state = 'disabled')
+
+#envoie la clé publique
+def envoyerCle():
+    #doit envoyer la varibale globale clePublique
+    print("envoyerCle")
+
 
 from tkinter import *
 from tkinter import filedialog
@@ -66,7 +81,7 @@ screen_width = window.winfo_screenwidth()
 screen_height = window.winfo_screenheight()
 
 window.geometry(f"{screen_width}x{screen_height}") 
-window.title("Shacks 2025") #à changer???
+window.title("Shacks 2025 - FreeFood") #à changer???
 window.config(bg = bgColour)
 
 # PARTIE 1 : FICHIER
@@ -120,7 +135,7 @@ buttonEnvoyer.place(x = 195, y = 260)
 labelBorder = Label(window, bg = colour2, padx = 75, pady = 15)
 labelBorder.place(x = 22, y =590)
 
-labelTextGros2 = Label(window, text = "Clés (privée et publique) :", font = ('Calibri', 20, 'bold'), bg = bgColour, fg = colour2)
+labelTextGros2 = Label(window, text = "Clé publique :", font = ('Calibri', 20, 'bold'), bg = bgColour, fg = colour2)
 labelTextGros2.place(x = 15, y = 350)
 
 # text
@@ -128,7 +143,6 @@ labelTextGros2.place(x = 15, y = 350)
 textClePrivee = Text(window, 
     height = 10, 
     width = 130, 
-    bg = 'WHITE',
     font = ('Calibri', 11),
     state = 'disabled'
     )
@@ -150,7 +164,7 @@ buttonGenerer.place(x = 25, y = 593)
 
 buttonEnvoyer2 = Button(window, 
     text = "Envoyer au Arduino", 
-    command=envoyer, 
+    command=envoyerCle, 
     font = ('Calibri', 15, 'bold'), 
     state = "disabled",
     bg = colour2light,
